@@ -6,6 +6,25 @@
     </head>
     <body>
         <h1>Enterprise RAG Chatbot</h1>
+
         <p>Welcome to our RAG Application</p>
+
+        <hr>
+
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            
+            <input
+                type="file"
+                name="file"
+                accept=".pdf, .docx"
+                required>
+            
+            <br><br>
+
+            <button type="submit">
+                Upload
+            </button>
+
+        </form>
     </body>
 </html>
