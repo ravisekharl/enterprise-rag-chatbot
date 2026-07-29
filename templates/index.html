@@ -1,119 +1,88 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
  
 <head>
- 
+    <meta charset="UTF-8">
     <title>Enterprise RAG Chatbot</title>
  
-    <link
-        rel="stylesheet"
-        href="/static/style.css"
-    >
- 
+    <link rel="stylesheet" href="/static/style.css">
 </head>
  
 <body>
  
-    <h1>Enterprise RAG Chatbot</h1>
+    <div class="container">
  
-    <hr>
+        <h1>Enterprise RAG Chatbot</h1>
  
-    <h2>Upload Document</h2>
+        <hr>
  
-    <form
-        action="/upload"
-        method="post"
-        enctype="multipart/form-data"
-    >
+        <h2>Upload Document</h2>
  
-        <input
-            type="file"
-            name="file"
-            required
-        >
+        <form action="/upload" method="post" enctype="multipart/form-data">
  
-        <button type="submit">
-            Upload
-        </button>
+            <input type="file" name="file" required>
  
-    </form>
+            <button type="submit">
+                Upload
+            </button>
  
-    {% if success %}
+        </form>
  
-    <p>{{ success }}</p>
+        {% if message %}
+            <p class="success">
+                {{ message }}
+            </p>
+        {% endif %}
  
-    <p>
+        {% if collection_name %}
+            <p>
+                <strong>Current Document:</strong>
+                {{ collection_name }}
+            </p>
+        {% endif %}
  
-        Collection Name :
+        <hr>
  
-        <b>{{ collection_name }}</b>
+        <h2>Ask Question</h2>
  
-    </p>
+        <form action="/chat" method="post">
  
-    {% endif %}
+            <!-- Hidden field -->
+            <input
+                type="hidden"
+                name="collection_name"
+                value="{{ collection_name }}"
+            >
  
-    {% if error %}
+            <textarea
+                name="question"
+                rows="6"
+                cols="80"
+                placeholder="Ask your question..."
+                required
+            ></textarea>
  
-    <p>{{ error }}</p>
+            <br><br>
  
-    {% endif %}
+            <button type="submit">
+                Ask
+            </button>
  
-    <hr>
+        </form>
  
-    <h2>Ask Question</h2>
+        {% if answer %}
  
-    <form
-        action="/chat"
-        method="post"
-    >
+        <hr>
  
-        <input
-            type="text"
-            name="collection_name"
-            value="{{ collection_name }}"
-            placeholder="Collection Name"
-            required
-        >
+        <h2>Answer</h2>
  
-        <br><br>
+        <div class="answer">
+            {{ answer }}
+        </div>
  
-        <textarea
-            name="question"
-            rows="5"
-            cols="80"
-            placeholder="Ask your question..."
-            required
-        ></textarea>
+        {% endif %}
  
-        <br><br>
- 
-        <button type="submit">
-            Ask
-        </button>
- 
-    </form>
- 
-    {% if answer %}
- 
-    <hr>
- 
-    <h2>Question</h2>
- 
-    <p>
- 
-        {{ question }}
- 
-    </p>
- 
-    <h2>Answer</h2>
- 
-    <p>
- 
-        {{ answer }}
- 
-    </p>
- 
-    {% endif %}
+    </div>
  
 </body>
  
