@@ -12,9 +12,9 @@ from pathlib import Path
 from fastapi import (
     APIRouter,
     File,
+    Form,
     Request,
-    UploadFile,
-    Form
+    UploadFile
 )
  
 from fastapi.responses import HTMLResponse
@@ -22,7 +22,7 @@ from fastapi.templating import Jinja2Templates
  
 from app.rag import (
     ingest_document,
-    ask_question,
+    ask_question
 )
  
 router = APIRouter()
@@ -40,7 +40,6 @@ async def home(request: Request):
         request=request,
         name="index.html",
         context={}
-
     )
  
  
@@ -54,10 +53,11 @@ async def upload_document(
         file.filename.endswith(".pdf")
         or file.filename.endswith(".docx")
     ):
+ 
         return templates.TemplateResponse(
-            "index.html",
-            {
-                "request": request,
+            request=request,
+            name="index.html",
+            context={
                 "error": "Only PDF and DOCX files are supported."
             }
         )
@@ -72,22 +72,34 @@ async def upload_document(
         file_name=file.filename
     )
  
+    request.session["collection_name"] = collection_name
+ 
     return templates.TemplateResponse(
-        "index.html",
-        {
-            "request": request,
-            "success": "Document uploaded successfully.",
-            "collection_name": collection_name
+        request=request,
+        name="index.html",
+        context={
+            "success": "Document uploaded successfully."
         }
     )
-
+ 
  
 @router.post("/chat", response_class=HTMLResponse)
 async def chat(
     request: Request,
-    question: str = Form(...),
-    collection_name: str = Form(...)
+    question: str = Form(...)
 ):
+ 
+    collection_name = request.session.get("collection_name")
+ 
+    if collection_name is None:
+ 
+        return templates.TemplateResponse(
+            request=request,
+            name="index.html",
+            context={
+                "error": "Please upload a document first."
+            }
+        )
  
     answer = ask_question(
         question=question,
@@ -95,11 +107,10 @@ async def chat(
     )
  
     return templates.TemplateResponse(
-        "index.html",
-        {
-            "request": request,
-            "answer": answer,
+        request=request,
+        name="index.html",
+        context={
             "question": question,
-            "collection_name": collection_name
+            "answer": answer
         }
     )
